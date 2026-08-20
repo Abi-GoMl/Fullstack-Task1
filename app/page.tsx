@@ -1,17 +1,13 @@
 import Link from "next/link";
-import { promises as fs } from "fs";
-import path from "path";
-import { Post, PostsResponse, slugify } from "./types";
+import { Post, slugify } from "./types";
+import localPostsData from "../posts.json";
 
-// SSG: Read posts statically from the local posts.json file
+// SSG: Load posts from bundled local json directly
 async function getLocalPosts(): Promise<Post[]> {
   try {
-    const filePath = path.join(process.cwd(), "posts.json");
-    const fileContents = await fs.readFile(filePath, "utf8");
-    const data: PostsResponse = JSON.parse(fileContents);
-    return data.posts || [];
+    return (localPostsData as { posts?: Post[] })?.posts || [];
   } catch (error) {
-    console.error("Error reading local posts.json:", error);
+    console.error("Error reading local posts data:", error);
     return [];
   }
 }
